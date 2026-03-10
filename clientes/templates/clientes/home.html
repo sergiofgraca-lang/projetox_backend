@@ -1,0 +1,12 @@
+<h1>Sistema de Clientes</h1>
+
+<h2>Lista de clientes</h2>
+
+<ul>
+{% for cliente in clientes %}
+    <li>
+        {{ cliente.nome }} - {{ cliente.telefone }} - {{ cliente.email }} - {{ cliente.endereco }} -
+        {{ cliente.estado }} - {{ cliente.cidade }} - {{ cliente.cep }} - {{ cliente.data_nascimento }}
+    </li>
+{% endfor %}
+</ul>

@@ -1,0 +1,1 @@
+web: gunicorn projetox_backend.wsgi:application
