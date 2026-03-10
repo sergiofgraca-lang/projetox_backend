@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 
+
+# CRIAR ADMIN AUTOMATICAMENTE
 def criar_admin():
     if not User.objects.filter(username="admin").exists():
         User.objects.create_superuser(
@@ -16,6 +18,7 @@ def criar_admin():
         )
 
 criar_admin()
+
 
 # LOGIN DO SISTEMA
 def login_usuario(request):
@@ -45,7 +48,7 @@ def login_usuario(request):
 
 
 # LOGOUT
-@login_required
+@login_required(login_url='login')
 def logout_usuario(request):
 
     logout(request)
@@ -53,13 +56,12 @@ def logout_usuario(request):
     return redirect('login')
 
 
-# LISTA DE CLIENTES (somente logado)
+# LISTA DE CLIENTES (SOMENTE ADMIN)
 @login_required(login_url='login')
 def lista_clientes(request):
 
     if not request.user.is_staff:
-        from django.http import HttpResponseForbidden
-        return HttpResponseForbidden("Acesso permitido apenas para administrador.")
+        return redirect('cadastrar_cliente')
 
     busca = request.GET.get('busca')
 
@@ -68,7 +70,6 @@ def lista_clientes(request):
     else:
         clientes = Cliente.objects.all()
 
-    # CONTAGEM DE CLIENTES
     total_clientes = Cliente.objects.count()
 
     return render(request, 'clientes/lista_clientes.html', {
@@ -76,7 +77,8 @@ def lista_clientes(request):
         'total_clientes': total_clientes
     })
 
-# CADASTRAR CLIENTE
+
+# CADASTRAR CLIENTE (QUALQUER USUÁRIO LOGADO)
 @login_required(login_url='login')
 def cadastrar_cliente(request):
 
@@ -90,10 +92,12 @@ def cadastrar_cliente(request):
 
             messages.success(request, "Cliente cadastrado com sucesso!")
 
+            # ADMIN VOLTA PARA LISTA
             if request.user.is_staff:
                 return redirect('lista_clientes')
-            else:
-                return redirect('cadastrar_cliente')
+
+            # USUÁRIO COMUM CONTINUA CADASTRANDO
+            return redirect('cadastrar_cliente')
 
     else:
         form = ClienteForm()
@@ -102,9 +106,13 @@ def cadastrar_cliente(request):
         'form': form
     })
 
-# EDITAR CLIENTE
+
+# EDITAR CLIENTE (SOMENTE ADMIN)
 @login_required(login_url='login')
 def editar_cliente(request, id):
+
+    if not request.user.is_staff:
+        return redirect('cadastrar_cliente')
 
     cliente = get_object_or_404(Cliente, id=id)
 
@@ -125,9 +133,12 @@ def editar_cliente(request, id):
     })
 
 
-# EXCLUIR CLIENTE
+# EXCLUIR CLIENTE (SOMENTE ADMIN)
 @login_required(login_url='login')
 def excluir_cliente(request, id):
+
+    if not request.user.is_staff:
+        return redirect('cadastrar_cliente')
 
     cliente = get_object_or_404(Cliente, id=id)
 
