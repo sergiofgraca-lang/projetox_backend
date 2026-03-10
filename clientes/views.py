@@ -5,6 +5,17 @@ from .forms import ClienteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.models import User
+
+def criar_admin():
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser(
+            "admin",
+            "admin@email.com",
+            "admin123"
+        )
+
+criar_admin()
 
 # LOGIN DO SISTEMA
 def login_usuario(request):
