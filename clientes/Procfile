@@ -1,1 +1,1 @@
-web: gunicorn projetox_backend.wsgi:application
+web: gunicorn configprojetox_backend.wsgi:application
