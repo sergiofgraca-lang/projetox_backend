@@ -7,23 +7,31 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-
+from django.http import HttpResponse
 import os
-from django.contrib.auth.models import User
-from django.contrib.auth.models import User
 
-def tornar_admin():
+
+# ---------------------------------------------------
+# PROMOVER USUÁRIO "sergio" PARA ADMINISTRADOR
+# ---------------------------------------------------
+def promover_admin(request):
+
     try:
         user = User.objects.get(username="sergio")
+
         user.is_staff = True
         user.is_superuser = True
         user.save()
-        print("Usuário sergio agora é administrador.")
+
+        return HttpResponse("Usuário sergio agora é administrador.")
+
     except:
-        pass
+        return HttpResponse("Usuário não encontrado.")
 
-tornar_admin()
 
+# ---------------------------------------------------
+# CRIAR SUPERUSER AUTOMÁTICO (RENDER)
+# ---------------------------------------------------
 def create_superuser():
 
     username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
@@ -44,7 +52,11 @@ def create_superuser():
 
         else:
             print("Superuser já existe.")
+
+
+# ---------------------------------------------------
 # LOGIN DO SISTEMA
+# ---------------------------------------------------
 def login_usuario(request):
 
     if request.method == 'POST':
@@ -58,10 +70,12 @@ def login_usuario(request):
 
             login(request, user)
 
+            # ADMIN VAI PARA LISTA
             if user.is_staff:
                 return redirect('lista_clientes')
-            else:
-                return redirect('cadastrar_cliente')
+
+            # USUÁRIO COMUM VAI PARA CADASTRO
+            return redirect('cadastrar_cliente')
 
         else:
             return render(request, 'clientes/login.html', {
@@ -71,7 +85,9 @@ def login_usuario(request):
     return render(request, 'clientes/login.html')
 
 
+# ---------------------------------------------------
 # LOGOUT
+# ---------------------------------------------------
 @login_required(login_url='login')
 def logout_usuario(request):
 
@@ -80,7 +96,9 @@ def logout_usuario(request):
     return redirect('login')
 
 
+# ---------------------------------------------------
 # LISTA DE CLIENTES (SOMENTE ADMIN)
+# ---------------------------------------------------
 @login_required(login_url='login')
 def lista_clientes(request):
 
@@ -102,7 +120,9 @@ def lista_clientes(request):
     })
 
 
+# ---------------------------------------------------
 # CADASTRAR CLIENTE (QUALQUER USUÁRIO LOGADO)
+# ---------------------------------------------------
 @login_required(login_url='login')
 def cadastrar_cliente(request):
 
@@ -116,11 +136,9 @@ def cadastrar_cliente(request):
 
             messages.success(request, "Cliente cadastrado com sucesso!")
 
-            # ADMIN VOLTA PARA LISTA
             if request.user.is_staff:
                 return redirect('lista_clientes')
 
-            # USUÁRIO COMUM CONTINUA CADASTRANDO
             return redirect('cadastrar_cliente')
 
     else:
@@ -131,7 +149,9 @@ def cadastrar_cliente(request):
     })
 
 
+# ---------------------------------------------------
 # EDITAR CLIENTE (SOMENTE ADMIN)
+# ---------------------------------------------------
 @login_required(login_url='login')
 def editar_cliente(request, id):
 
@@ -157,7 +177,9 @@ def editar_cliente(request, id):
     })
 
 
+# ---------------------------------------------------
 # EXCLUIR CLIENTE (SOMENTE ADMIN)
+# ---------------------------------------------------
 @login_required(login_url='login')
 def excluir_cliente(request, id):
 
