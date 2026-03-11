@@ -59,7 +59,6 @@ def lista_clientes(request):
 
 
 # CADASTRAR CLIENTE
-@login_required(login_url='login')
 def cadastrar_cliente(request):
 
     if request.method == 'POST':
@@ -67,23 +66,18 @@ def cadastrar_cliente(request):
         form = ClienteForm(request.POST)
 
         if form.is_valid():
-
             form.save()
-
             messages.success(request, "Cliente cadastrado com sucesso!")
-
             return redirect('lista_clientes')
 
     else:
 
         form = ClienteForm()
 
-    return render(request, 'clientes/cadastrar_cliente.html', {'form': form})
+    return render(request, 'clientes/form_cliente.html', {'form': form})
 
 
 # EDITAR CLIENTE
-@login_required(login_url='login')
-@permission_required('clientes.change_cliente', raise_exception=True)
 def editar_cliente(request, id):
 
     cliente = get_object_or_404(Cliente, id=id)
@@ -93,11 +87,8 @@ def editar_cliente(request, id):
         form = ClienteForm(request.POST, instance=cliente)
 
         if form.is_valid():
-
             form.save()
-
             messages.success(request, "Cliente atualizado com sucesso!")
-
             return redirect('lista_clientes')
 
     else:

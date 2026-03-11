@@ -13,11 +13,15 @@
 <div class="card-body">
 
 <p>
+
 Tem certeza que deseja excluir o cliente:
+
 <strong>{{ cliente.nome }}</strong> ?
+
 </p>
 
 <form method="POST">
+
 {% csrf_token %}
 
 <button class="btn btn-danger">
@@ -31,7 +35,9 @@ Cancelar
 </form>
 
 </div>
+
 </div>
+
 </div>
 
 {% endblock %}

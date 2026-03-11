@@ -1,16 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends 'clientes/base.html' %}
 
-<title>Editar Cliente</title>
+{% block content %}
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="container mt-5">
 
-</head>
+<div class="card shadow">
 
-<body class="container mt-4">
+<div class="card-header bg-primary text-white">
+<h4 class="mb-0">
+{% if cliente %}
+Editar Cliente
+{% else %}
+Cadastrar Cliente
+{% endif %}
+</h4>
+</div>
 
-<h1>Editar Cliente</h1>
+<div class="card-body">
 
 <form method="POST">
 
@@ -18,67 +24,42 @@
 
 <div class="row">
 
-<div class="col-md-4">
-<label>Nome</label>
-{{ form.nome }}
+{% for field in form %}
+
+<div class="col-md-4 mb-3">
+
+<label class="form-label">
+{{ field.label }}
+</label>
+
+{{ field }}
+
+{% if field.errors %}
+<div class="text-danger">
+{{ field.errors }}
 </div>
-
-<div class="col-md-4">
-<label>Telefone</label>
-{{ form.telefone }}
-</div>
-
-<div class="col-md-4">
-<label>Email</label>
-{{ form.email }}
-</div>
-
-</div>
-
-<br>
-
-<div class="row">
-
-<div class="col-md-4">
-<label>Endereço</label>
-{{ form.endereco }}
-</div>
-
-<div class="col-md-3">
-<label>Cidade</label>
-{{ form.cidade }}
-</div>
-
-<div class="col-md-2">
-<label>Estado</label>
-{{ form.estado }}
-</div>
-
-<div class="col-md-3">
-<label>CEP</label>
-{{ form.cep }}
-</div>
+{% endif %}
 
 </div>
 
-<br>
-
-<div class="row">
-
-<div class="col-md-4">
-<label>Data de Nascimento</label>
-{{ form.data_nascimento }}
-</div>
+{% endfor %}
 
 </div>
 
-<br>
+<button class="btn btn-success">
+Salvar
+</button>
 
-<button class="btn btn-success">Salvar Alterações</button>
-
-<a href="/" class="btn btn-secondary">Voltar</a>
+<a href="{% url 'lista_clientes' %}" class="btn btn-secondary">
+Voltar
+</a>
 
 </form>
 
-</body>
-</html>
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}
