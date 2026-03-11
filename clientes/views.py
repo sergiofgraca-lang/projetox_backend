@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
+from django.shortcuts import render
+from .models import Cliente
+from django.contrib.auth.decorators import login_required
 
 # LOGIN
 def login_usuario(request):
@@ -40,7 +43,9 @@ def logout_usuario(request):
 
 
 # LISTA CLIENTES
-@login_required(login_url='login')
+
+
+@login_required
 def lista_clientes(request):
 
     busca = request.GET.get('busca')
@@ -52,10 +57,12 @@ def lista_clientes(request):
 
     total_clientes = clientes.count()
 
-    return render(request, 'clientes/lista_clientes.html', {
+    context = {
         'clientes': clientes,
         'total_clientes': total_clientes
-    })
+    }
+
+    return render(request, 'clientes/lista_clientes.html', context)
 
 
 # CADASTRAR CLIENTE
