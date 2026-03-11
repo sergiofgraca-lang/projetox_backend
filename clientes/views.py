@@ -10,6 +10,9 @@ from django.contrib import messages
 # LOGIN
 def login_usuario(request):
 
+    if request.user.is_authenticated:
+        return redirect('lista_clientes')
+
     if request.method == 'POST':
 
         username = request.POST.get('username')
@@ -17,14 +20,11 @@ def login_usuario(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user:
+        if user is not None:
             login(request, user)
-
             return redirect('lista_clientes')
-
-        return render(request, 'clientes/login.html', {
-            'erro': 'Usuário ou senha inválidos'
-        })
+        else:
+            messages.error(request, "Usuário ou senha inválidos")
 
     return render(request, 'clientes/login.html')
 
@@ -34,12 +34,13 @@ def login_usuario(request):
 def logout_usuario(request):
 
     logout(request)
+    messages.success(request, "Logout realizado com sucesso.")
 
     return redirect('login')
 
 
-# LISTA CLIENTES (CORRIGIDO)
-@login_required
+# LISTA CLIENTES
+@login_required(login_url='login')
 def lista_clientes(request):
 
     busca = request.GET.get('busca')
@@ -81,7 +82,7 @@ def cadastrar_cliente(request):
 
 
 # EDITAR CLIENTE
-@login_required
+@login_required(login_url='login')
 @permission_required('clientes.change_cliente', raise_exception=True)
 def editar_cliente(request, id):
 
@@ -92,8 +93,11 @@ def editar_cliente(request, id):
         form = ClienteForm(request.POST, instance=cliente)
 
         if form.is_valid():
+
             form.save()
+
             messages.success(request, "Cliente atualizado com sucesso!")
+
             return redirect('lista_clientes')
 
     else:
@@ -107,14 +111,18 @@ def editar_cliente(request, id):
 
 
 # EXCLUIR CLIENTE
-@login_required
+@login_required(login_url='login')
+@permission_required('clientes.delete_cliente', raise_exception=True)
 def excluir_cliente(request, id):
 
     cliente = get_object_or_404(Cliente, id=id)
 
     if request.method == "POST":
+
         cliente.delete()
+
         messages.success(request, "Cliente excluído com sucesso!")
+
         return redirect('lista_clientes')
 
     return render(request, 'clientes/confirmar_exclusao.html', {

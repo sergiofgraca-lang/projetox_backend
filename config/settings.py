@@ -18,11 +18,13 @@ SECRET_KEY = os.getenv(
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
-    ".onrender.com",
-    "localhost",
-    "127.0.0.1",
+    '127.0.0.1',
+    'localhost',
+    'projetox-0blz.onrender.com'
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://projetox-0blz.onrender.com'
+]
 
 # APPLICATIONS
 INSTALLED_APPS = [
