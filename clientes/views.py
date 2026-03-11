@@ -20,10 +20,7 @@ def login_usuario(request):
         if user:
             login(request, user)
 
-            if user.has_perm('clientes.view_cliente'):
-                return redirect('lista_clientes')
-            else:
-                return redirect('cadastrar_cliente')
+            return redirect('lista_clientes')
 
         return render(request, 'clientes/login.html', {
             'erro': 'Usuário ou senha inválidos'
@@ -41,9 +38,8 @@ def logout_usuario(request):
     return redirect('login')
 
 
-# LISTA CLIENTES
+# LISTA CLIENTES (CORRIGIDO)
 @login_required
-@permission_required('clientes.view_cliente', raise_exception=True)
 def lista_clientes(request):
 
     busca = request.GET.get('busca')
@@ -75,10 +71,7 @@ def cadastrar_cliente(request):
 
             messages.success(request, "Cliente cadastrado com sucesso!")
 
-            if request.user.has_perm('clientes.view_cliente'):
-                return redirect('lista_clientes')
-
-            return redirect('cadastrar_cliente')
+            return redirect('lista_clientes')
 
     else:
 
@@ -115,7 +108,6 @@ def editar_cliente(request, id):
 
 # EXCLUIR CLIENTE
 @login_required
-@permission_required('clientes.delete_cliente', raise_exception=True)
 def excluir_cliente(request, id):
 
     cliente = get_object_or_404(Cliente, id=id)
@@ -123,5 +115,8 @@ def excluir_cliente(request, id):
     if request.method == "POST":
         cliente.delete()
         messages.success(request, "Cliente excluído com sucesso!")
+        return redirect('lista_clientes')
 
-    return redirect('lista_clientes')
+    return render(request, 'clientes/confirmar_exclusao.html', {
+        'cliente': cliente
+    })
