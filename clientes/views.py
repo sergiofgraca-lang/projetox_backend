@@ -5,6 +5,9 @@ from .forms import ClienteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required, permission_required
+
 
 # LOGIN DO SISTEMA
 def login_usuario(request):
@@ -31,7 +34,14 @@ def logout_usuario(request):
     return redirect('login')
 
 # LISTA DE CLIENTES (SOMENTE ADMIN)
-@login_required(login_url='login')
+
+@login_required
+@permission_required('clientes.view_cliente', raise_exception=True)
+def lista_clientes(request):
+    clientes = Cliente.objects.all()
+    return render(request, 'clientes/lista_clientes.html', {'clientes': clientes})
+
+@staff_member_required
 def lista_clientes(request):
     if not request.user.is_staff:
         return redirect('cadastrar_cliente')
@@ -59,8 +69,10 @@ def cadastrar_cliente(request):
     return render(request, 'clientes/cadastrar_cliente.html', {'form': form})
 
 # EDITAR CLIENTE (SOMENTE ADMIN)
-@login_required(login_url='login')
-def editar_cliente(request, id):
+
+@login_required
+@permission_required('clientes.delete_cliente', raise_exception=True)
+def excluir_cliente(request, id):
     if not request.user.is_staff:
         return redirect('cadastrar_cliente')
 
