@@ -70,14 +70,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database configuration
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://projetox:vlDNs9rKOJNuoyQyX741H0mzP1oGetol@dpg-d6o3qotm5p6s73c7u12g-a.oregon-postgres.render.com/projetox_uliw"
-)
+import os
 
-if DATABASE_URL:
+if os.getenv("RENDER"):
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': '5432',
+        }
     }
 else:
     DATABASES = {
