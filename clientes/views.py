@@ -5,33 +5,13 @@ from .forms import ClienteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.models import User
-import os
 
-
-# --- CRIA SUPERUSER AUTOMATICAMENTE ---
-def create_superuser():
-    username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-    email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
-    password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
-
-    if username and password:
-        if not User.objects.filter(username=username).exists():
-            print("Criando superuser automaticamente...")
-            User.objects.create_superuser(username=username, email=email, password=password)
-        else:
-            print("Superuser já existe.")
-
-create_superuser()
-
-# --- LOGIN ---
+# LOGIN DO SISTEMA
 def login_usuario(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
         user = authenticate(request, username=username, password=password)
-
         if user is not None:
             login(request, user)
             if user.is_staff:
@@ -42,18 +22,15 @@ def login_usuario(request):
             return render(request, 'clientes/login.html', {
                 'erro': 'Usuário ou senha inválidos'
             })
-
     return render(request, 'clientes/login.html')
 
-
-# --- LOGOUT ---
+# LOGOUT
 @login_required(login_url='login')
 def logout_usuario(request):
     logout(request)
     return redirect('login')
 
-
-# --- LISTA DE CLIENTES (SOMENTE ADMIN) ---
+# LISTA DE CLIENTES (SOMENTE ADMIN)
 @login_required(login_url='login')
 def lista_clientes(request):
     if not request.user.is_staff:
@@ -68,8 +45,7 @@ def lista_clientes(request):
         'total_clientes': total_clientes
     })
 
-
-# --- CADASTRAR CLIENTE (TODOS OS USUÁRIOS LOGADOS) ---
+# CADASTRAR CLIENTE (QUALQUER USUÁRIO LOGADO)
 @login_required(login_url='login')
 def cadastrar_cliente(request):
     if request.method == 'POST':
@@ -82,8 +58,7 @@ def cadastrar_cliente(request):
         form = ClienteForm()
     return render(request, 'clientes/cadastrar_cliente.html', {'form': form})
 
-
-# --- EDITAR CLIENTE (SOMENTE ADMIN) ---
+# EDITAR CLIENTE (SOMENTE ADMIN)
 @login_required(login_url='login')
 def editar_cliente(request, id):
     if not request.user.is_staff:
@@ -97,11 +72,9 @@ def editar_cliente(request, id):
             return redirect('lista_clientes')
     else:
         form = ClienteForm(instance=cliente)
-
     return render(request, 'clientes/form_cliente.html', {'form': form, 'cliente': cliente})
 
-
-# --- EXCLUIR CLIENTE (SOMENTE ADMIN) ---
+# EXCLUIR CLIENTE (SOMENTE ADMIN)
 @login_required(login_url='login')
 def excluir_cliente(request, id):
     if not request.user.is_staff:
