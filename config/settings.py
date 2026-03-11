@@ -8,6 +8,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # SECURITY
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
@@ -16,7 +17,11 @@ SECRET_KEY = os.getenv(
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    '.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # APPLICATIONS
@@ -36,7 +41,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
-    # WhiteNoise para arquivos estáticos
+    # WhiteNoise
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,13 +61,13 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
 
-        # pasta global de templates
         'DIRS': [BASE_DIR / 'templates'],
 
         'APP_DIRS': True,
 
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -76,23 +81,17 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # DATABASE
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL)
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
+}
 
 
 # INTERNATIONALIZATION
 LANGUAGE_CODE = 'pt-br'
+
 TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
@@ -101,6 +100,7 @@ USE_TZ = True
 
 # STATIC FILES
 STATIC_URL = '/static/'
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -111,7 +111,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/lista/'
 
 
-# SECURITY SETTINGS
+# SECURITY
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 
