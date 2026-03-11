@@ -12,17 +12,6 @@
 <body class="bg-light">
 
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-    {% if messages %}
-
-{% for message in messages %}
-
-<div class="alert alert-success mt-3">
-{{ message }}
-</div>
-
-{% endfor %}
-
-{% endif %}
 
 <div class="container">
 
@@ -52,7 +41,16 @@ Sair
 
 </nav>
 
+
 <div class="container mt-4">
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success">
+{{ message }}
+</div>
+{% endfor %}
+{% endif %}
 
 {% block content %}
 {% endblock %}
