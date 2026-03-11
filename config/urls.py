@@ -3,10 +3,10 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 def home(request):
-    return redirect('/clientes/login/')
+    return redirect('/login/')
 
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
-    path('clientes/', include('clientes.urls')),
+    path('', include('clientes.urls')),
 ]
