@@ -35,25 +35,21 @@ def logout_usuario(request):
 
 
 # ===================== LISTA CLIENTES =====================
-@login_required(login_url='login')
+# views.py
+from django.shortcuts import render
+from .models import Cliente
+import logging
+
+logger = logging.getLogger(__name__)
+
+@login_required
 def lista_clientes(request):
-    busca = request.GET.get('busca', '')  # <<< pega a busca da URL ou '' se não existir
-
-    clientes = Cliente.objects.all()
-
-    if busca:
-        clientes = clientes.filter(nome__icontains=busca)
-
-    total_clientes = clientes.count()
-
-    context = {
-        'clientes': clientes,
-        'total_clientes': total_clientes,
-        'busca': busca
-    }
-
-    return render(request, 'clientes/lista_clientes.html', context)
-
+    try:
+        clientes = Cliente.objects.all()
+        return render(request, 'clientes/lista_clientes.html', {'clientes': clientes})
+    except Exception as e:
+        logger.error("Erro ao listar clientes: %s", e, exc_info=True)
+        return render(request, 'clientes/lista_clientes.html', {'clientes': [], 'erro': str(e)})
 
 # ===================== CADASTRAR CLIENTE =====================
 @login_required(login_url='login')
