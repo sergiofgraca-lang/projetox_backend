@@ -6,14 +6,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
-from django.shortcuts import render
-
-from django.contrib.auth.decorators import login_required
-
-
-
-
-
 
 # LOGIN
 def login_usuario(request):
@@ -48,14 +40,9 @@ def logout_usuario(request):
 
 
 # LISTA CLIENTES
-
-
-from django.shortcuts import render
-from .models import Cliente
-from django.contrib.auth.decorators import login_required
-
-@login_required
+@login_required(login_url='login')
 def lista_clientes(request):
+
     busca = request.GET.get('busca')
 
     if busca:
@@ -65,15 +52,14 @@ def lista_clientes(request):
 
     total_clientes = clientes.count()
 
-    context = {
+    return render(request, 'clientes/lista_clientes.html', {
         'clientes': clientes,
         'total_clientes': total_clientes
-    }
-
-    return render(request, 'clientes/lista_clientes.html', context)
+    })
 
 
 # CADASTRAR CLIENTE
+@login_required(login_url='login')
 def cadastrar_cliente(request):
 
     if request.method == 'POST':
@@ -86,13 +72,13 @@ def cadastrar_cliente(request):
             return redirect('lista_clientes')
 
     else:
-
         form = ClienteForm()
 
     return render(request, 'clientes/form_cliente.html', {'form': form})
 
 
 # EDITAR CLIENTE
+@login_required(login_url='login')
 def editar_cliente(request, id):
 
     cliente = get_object_or_404(Cliente, id=id)
@@ -107,7 +93,6 @@ def editar_cliente(request, id):
             return redirect('lista_clientes')
 
     else:
-
         form = ClienteForm(instance=cliente)
 
     return render(request, 'clientes/form_cliente.html', {
