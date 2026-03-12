@@ -37,11 +37,10 @@ def logout_usuario(request):
 # ===================== LISTA CLIENTES =====================
 @login_required(login_url='login')
 def lista_clientes(request):
-    # Pega o valor de busca ou deixa vazio
-    busca = request.GET.get('busca', '').strip()
+    busca = request.GET.get('busca', '')  # <<< pega a busca da URL ou '' se não existir
 
-    # Filtra clientes
     clientes = Cliente.objects.all()
+
     if busca:
         clientes = clientes.filter(nome__icontains=busca)
 
