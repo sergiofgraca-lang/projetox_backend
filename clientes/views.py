@@ -41,10 +41,11 @@ def logout_usuario(request):
 
 
 # LISTA CLIENTES
+# LISTA CLIENTES
 @login_required(login_url='login')
 def lista_clientes(request):
 
-    value="{{ busca }}"
+    busca = request.GET.get('busca', '')
 
     clientes = Cliente.objects.all()
 
