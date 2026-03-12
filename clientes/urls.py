@@ -13,3 +13,5 @@ urlpatterns = [
     path('excluir/<int:id>/', views.excluir_cliente, name='excluir_cliente'),
 
 ]
+
+

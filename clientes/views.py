@@ -45,24 +45,28 @@ def logout_usuario(request):
 # LISTA CLIENTES
 
 
+from django.shortcuts import render
+from .models import Cliente
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def lista_clientes(request):
 
-    busca = request.GET.get('busca')
+    busca = request.GET.get("busca", "")
+
+    clientes = Cliente.objects.all()
 
     if busca:
-        clientes = Cliente.objects.filter(nome__icontains=busca)
-    else:
-        clientes = Cliente.objects.all()
+        clientes = clientes.filter(nome__icontains=busca)
 
     total_clientes = clientes.count()
 
     context = {
-        'clientes': clientes,
-        'total_clientes': total_clientes
+        "clientes": clientes,
+        "total_clientes": total_clientes,
     }
 
-    return render(request, 'clientes/lista_clientes.html', context)
+    return render(request, "clientes/lista_clientes.html", context)
 
 
 # CADASTRAR CLIENTE
