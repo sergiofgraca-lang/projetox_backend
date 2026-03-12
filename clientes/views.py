@@ -44,7 +44,7 @@ def logout_usuario(request):
 @login_required(login_url='login')
 def lista_clientes(request):
 
-    busca = request.GET.get('busca', '')
+    value="{{ busca }}"
 
     clientes = Cliente.objects.all()
 
