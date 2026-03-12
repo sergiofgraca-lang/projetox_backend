@@ -119,3 +119,8 @@ def excluir_cliente(request, id):
     return render(request, 'clientes/confirmar_exclusao.html', {
         'cliente': cliente
     })
+
+@login_required(login_url='login')
+def lista_clientes(request):
+
+    return render(request, 'clientes/teste.html')
