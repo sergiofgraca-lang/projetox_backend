@@ -120,7 +120,3 @@ def excluir_cliente(request, id):
         'cliente': cliente
     })
 
-@login_required(login_url='login')
-def lista_clientes(request):
-
-    return render(request, 'clientes/teste.html')
