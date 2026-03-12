@@ -7,8 +7,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from django.shortcuts import render
-from .models import Cliente
+
 from django.contrib.auth.decorators import login_required
+
+
+
+
+
 
 # LOGIN
 def login_usuario(request):
@@ -51,22 +56,21 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def lista_clientes(request):
-
-    busca = request.GET.get("busca", "")
-
-    clientes = Cliente.objects.all()
+    busca = request.GET.get('busca')
 
     if busca:
-        clientes = clientes.filter(nome__icontains=busca)
+        clientes = Cliente.objects.filter(nome__icontains=busca)
+    else:
+        clientes = Cliente.objects.all()
 
     total_clientes = clientes.count()
 
     context = {
-        "clientes": clientes,
-        "total_clientes": total_clientes,
+        'clientes': clientes,
+        'total_clientes': total_clientes
     }
 
-    return render(request, "clientes/lista_clientes.html", context)
+    return render(request, 'clientes/lista_clientes.html', context)
 
 
 # CADASTRAR CLIENTE

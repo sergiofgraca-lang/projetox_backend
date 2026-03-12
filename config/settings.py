@@ -113,8 +113,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # LOGIN
-LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/lista/"
+LOGIN_REDIRECT_URL = 'lista_clientes'
+LOGOUT_REDIRECT_URL = 'login'
 
 
 # SECURITY
@@ -127,3 +127,4 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
