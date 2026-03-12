@@ -44,9 +44,11 @@ def logout_usuario(request):
 # LISTA CLIENTES
 @login_required(login_url='login')
 def lista_clientes(request):
+    # Pega o parâmetro de busca da URL, se existir
     busca = request.GET.get('busca', '')
 
     clientes = Cliente.objects.all()
+
     if busca:
         clientes = clientes.filter(nome__icontains=busca)
 
