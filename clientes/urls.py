@@ -11,7 +11,4 @@ urlpatterns = [
 
     path('editar/<int:id>/', views.editar_cliente, name='editar_cliente'),
     path('excluir/<int:id>/', views.excluir_cliente, name='excluir_cliente'),
-
 ]
-
-
