@@ -44,11 +44,9 @@ def logout_usuario(request):
 # LISTA CLIENTES
 @login_required(login_url='login')
 def lista_clientes(request):
-
     busca = request.GET.get('busca', '')
 
     clientes = Cliente.objects.all()
-
     if busca:
         clientes = clientes.filter(nome__icontains=busca)
 
@@ -61,7 +59,6 @@ def lista_clientes(request):
     }
 
     return render(request, 'clientes/lista_clientes.html', context)
-
 # CADASTRAR CLIENTE
 @login_required(login_url='login')
 def cadastrar_cliente(request):
