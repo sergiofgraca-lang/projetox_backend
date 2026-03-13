@@ -4,14 +4,19 @@ from .forms import ClienteForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ===================== LOGIN =====================
 def login_usuario(request):
+
     if request.user.is_authenticated:
-        return redirect('lista_clientes')
+        return redirect('cadastrar_cliente')
 
     if request.method == 'POST':
+
         username = request.POST.get('username')
         password = request.POST.get('password')
 
@@ -19,7 +24,7 @@ def login_usuario(request):
 
         if user is not None:
             login(request, user)
-            return redirect('lista_clientes')
+            return redirect('cadastrar_cliente')
         else:
             messages.error(request, "Usuário ou senha inválidos")
 
@@ -29,54 +34,75 @@ def login_usuario(request):
 # ===================== LOGOUT =====================
 @login_required(login_url='login')
 def logout_usuario(request):
+
     logout(request)
     messages.success(request, "Logout realizado com sucesso.")
     return redirect('login')
 
 
 # ===================== LISTA CLIENTES =====================
-# views.py
-from django.shortcuts import render
-from .models import Cliente
-import logging
-
-logger = logging.getLogger(__name__)
-
 @login_required
 def lista_clientes(request):
+
+    # somente gerente ou admin podem acessar
+    if not request.user.is_superuser and not request.user.groups.filter(name='gerente').exists():
+        messages.error(request, "Você não tem permissão para acessar a lista.")
+        return redirect('cadastrar_cliente')
+
     try:
         clientes = Cliente.objects.all()
         return render(request, 'clientes/lista_clientes.html', {'clientes': clientes})
+
     except Exception as e:
         logger.error("Erro ao listar clientes: %s", e, exc_info=True)
         return render(request, 'clientes/lista_clientes.html', {'clientes': [], 'erro': str(e)})
 
+
 # ===================== CADASTRAR CLIENTE =====================
 @login_required(login_url='login')
 def cadastrar_cliente(request):
+
     if request.method == 'POST':
+
         form = ClienteForm(request.POST)
+
         if form.is_valid():
+
             form.save()
             messages.success(request, "Cliente cadastrado com sucesso!")
-            return redirect('lista_clientes')
+
+            if request.user.is_superuser or request.user.groups.filter(name='gerente').exists():
+                return redirect('lista_clientes')
+
+            return redirect('cadastrar_cliente')
+
     else:
         form = ClienteForm()
+
     return render(request, 'clientes/form_cliente.html', {'form': form})
 
 
 # ===================== EDITAR CLIENTE =====================
 @login_required(login_url='login')
 def editar_cliente(request, id):
+
+    if not request.user.is_superuser and not request.user.groups.filter(name='gerente').exists():
+        return redirect('cadastrar_cliente')
+
     cliente = get_object_or_404(Cliente, id=id)
+
     if request.method == 'POST':
+
         form = ClienteForm(request.POST, instance=cliente)
+
         if form.is_valid():
             form.save()
             messages.success(request, "Cliente atualizado com sucesso!")
             return redirect('lista_clientes')
+
     else:
         form = ClienteForm(instance=cliente)
+
     return render(request, 'clientes/form_cliente.html', {'form': form, 'cliente': cliente})
 
 
@@ -84,9 +110,12 @@ def editar_cliente(request, id):
 @login_required(login_url='login')
 @permission_required('clientes.delete_cliente', raise_exception=True)
 def excluir_cliente(request, id):
+
     cliente = get_object_or_404(Cliente, id=id)
+
     if request.method == "POST":
         cliente.delete()
         messages.success(request, "Cliente excluído com sucesso!")
         return redirect('lista_clientes')
+
     return render(request, 'clientes/confirmar_exclusao.html', {'cliente': cliente})

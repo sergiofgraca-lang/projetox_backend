@@ -79,24 +79,14 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # DATABASE
-DATABASE_URL = os.getenv("DATABASE_URL")
+import dj_database_url
 
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://projetox_db2_user:Kmcp9nzuvq0PCCEwDczj2NqnvzTzNkH8@dpg-d6obdlia214c73b7fukg-a.oregon-postgres.render.com/projetox_db2',
+        conn_max_age=600
+    )
+}
 # INTERNATIONALIZATION
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
@@ -106,14 +96,18 @@ USE_TZ = True
 
 
 # STATIC FILES
-STATIC_URL = "/static/"
+STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # LOGIN
-LOGIN_REDIRECT_URL = 'lista_clientes'
+LOGIN_REDIRECT_URL = '/cadastro/'
 LOGOUT_REDIRECT_URL = 'login'
 
 
