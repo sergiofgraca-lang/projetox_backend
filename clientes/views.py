@@ -119,3 +119,19 @@ def excluir_cliente(request, id):
         return redirect('lista_clientes')
 
     return render(request, 'clientes/confirmar_exclusao.html', {'cliente': cliente})
+
+    from django.shortcuts import render
+from .models import Cliente
+
+def lista_clientes(request):
+
+    busca = request.GET.get('busca')
+
+    if busca:
+        clientes = Cliente.objects.filter(nome__icontains=busca)
+    else:
+        clientes = Cliente.objects.all()
+
+    return render(request, 'clientes/lista_clientes.html', {
+        'clientes': clientes
+    })
