@@ -1,12 +1,18 @@
-import subprocess
+import os
+import sys
 import webbrowser
-import time
+import threading
 
-# inicia o servidor Django
-subprocess.Popen(["python", "manage.py", "runserver"])
+def abrir_navegador():
+    webbrowser.open("http://127.0.0.1:8000")
 
-# espera o servidor iniciar
-time.sleep(3)
+def main():
+    base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.getcwd()
+    os.chdir(base_dir)
 
-# abre o sistema no navegador
-webbrowser.open("http://127.0.0.1:8000")
+    threading.Timer(2, abrir_navegador).start()
+
+    os.system("python manage.py runserver")
+
+if __name__ == "__main__":
+    main()
