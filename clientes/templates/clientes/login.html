@@ -6,39 +6,149 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login do Sistema GRACE CLEAR</title>
+<title>Login - Grace Clear</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+<style>
+
+/* FUNDO */
+body {
+    background: linear-gradient(135deg, #d4af37, #f5e6a3);
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* MARCA D'ÁGUA */
+body::before {
+    content: "Grace Clear";
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    transform: rotate(-90deg) translateY(-50%);
+    font-size: 100px;
+    color: rgba(255,255,255,0.12);
+}
+
+body::after {
+    content: "Grace Clear";
+    position: absolute;
+    right: -80px;
+    top: 50%;
+    transform: rotate(90deg) translateY(-50%);
+    font-size: 100px;
+    color: rgba(255,255,255,0.12);
+}
+
+/* CARD */
+.card {
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.92);
+    border: none;
+    animation: aparecer 0.8s ease;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TÍTULO */
+.titulo-grace {
+    font-weight: bold;
+    font-size: 28px;
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* LABELS COLORIDOS */
+.label-usuario {
+    color: #007bff;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.label-senha {
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* INPUT BONITO */
+.form-control {
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    transition: 0.3s;
+}
+
+/* FOCO DIFERENTE */
+.input-usuario:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0,123,255,0.3);
+}
+
+.input-senha:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 10px rgba(220,53,69,0.3);
+}
+
+/* BOTÃO OLHO */
+.btn-eye {
+    border-radius: 12px;
+    font-size: 18px;
+}
+
+/* BOTÃO LOGIN */
+.btn-primary {
+    background-color: #d4af37;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 12px;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #b8962e;
+}
+
+</style>
+
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container">
+<div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
+<div style="width: 100%; max-width: 420px;">
 
-<div class="row justify-content-center">
+<div class="card shadow-lg">
 
-<div class="col-md-4">
-
-<div class="card mt-5 shadow">
-
-<div class="card-header text-center">
-<h4>Login do Sistema GRACE CLEAR</h4>
+<div class="card-header text-center bg-transparent border-0">
+<h4 class="titulo-grace">Grace Clear - Cadastro de Clientes</h4>
+<small style="font-size:16px;">Login do Sistema</small>
 </div>
 
 <div class="card-body">
 
-<form method="POST" action="">
+<form method="POST">
 
 {% csrf_token %}
 
+<label class="label-usuario">Usuário</label>
 <input
 type="text"
 name="username"
-placeholder="Usuário"
-class="form-control mb-3"
+class="form-control input-usuario mb-3"
 required
 >
+
+<label class="label-senha">Senha</label>
 
 <div class="input-group mb-3">
 
@@ -46,14 +156,13 @@ required
 type="password"
 name="password"
 id="senha"
-placeholder="Senha"
-class="form-control"
+class="form-control input-senha"
 required
 >
 
 <button
 type="button"
-class="btn btn-outline-secondary"
+class="btn btn-outline-secondary btn-eye"
 onclick="mostrarSenha()"
 >
 👁
@@ -92,9 +201,9 @@ function mostrarSenha() {
 let campo = document.getElementById("senha");
 
 if (campo.type === "password") {
-campo.type = "text";
+    campo.type = "text";
 } else {
-campo.type = "password";
+    campo.type = "password";
 }
 
 }
