@@ -8,7 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 # ===================== LOGIN =====================
 def login_usuario(request):
 
@@ -44,18 +43,32 @@ def logout_usuario(request):
 @login_required
 def lista_clientes(request):
 
-    # somente gerente ou admin podem acessar
     if not request.user.is_superuser and not request.user.groups.filter(name='gerente').exists():
         messages.error(request, "Você não tem permissão para acessar a lista.")
         return redirect('cadastrar_cliente')
 
     try:
-        clientes = Cliente.objects.all()
-        return render(request, 'clientes/lista_clientes.html', {'clientes': clientes})
+        busca = request.GET.get('busca')
+
+        if busca:
+            clientes = Cliente.objects.filter(nome__icontains=busca)
+        else:
+            clientes = Cliente.objects.all()
+
+        total_clientes = clientes.count()
+
+        return render(request, 'clientes/lista_clientes.html', {
+            'clientes': clientes,
+            'busca': busca,
+            'total_clientes': total_clientes
+        })
 
     except Exception as e:
         logger.error("Erro ao listar clientes: %s", e, exc_info=True)
-        return render(request, 'clientes/lista_clientes.html', {'clientes': [], 'erro': str(e)})
+        return render(request, 'clientes/lista_clientes.html', {
+            'clientes': [],
+            'erro': str(e)
+        })
 
 
 # ===================== CADASTRAR CLIENTE =====================
@@ -67,7 +80,6 @@ def cadastrar_cliente(request):
         form = ClienteForm(request.POST)
 
         if form.is_valid():
-
             form.save()
             messages.success(request, "Cliente cadastrado com sucesso!")
 
@@ -118,20 +130,4 @@ def excluir_cliente(request, id):
         messages.success(request, "Cliente excluído com sucesso!")
         return redirect('lista_clientes')
 
-    return render(request, 'clientes/confirmar_exclusao.html', {'cliente': cliente})
-
-    from django.shortcuts import render
-from .models import Cliente
-
-def lista_clientes(request):
-
-    busca = request.GET.get('busca')
-
-    if busca:
-        clientes = Cliente.objects.filter(nome__icontains=busca)
-    else:
-        clientes = Cliente.objects.all()
-
-    return render(request, 'clientes/lista_clientes.html', {
-        'clientes': clientes
-    })
+    return redirect('lista_clientes')

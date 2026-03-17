@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
 {% if erro %}
     <p style="color:red;">Erro: {{ erro }}</p>
 {% endif %}
@@ -39,7 +38,6 @@ name="busca"
 class="form-control"
 placeholder="Buscar cliente pelo nome"
 value="{{ busca }}"
-
 >
 
 <button class="btn btn-primary">
@@ -51,9 +49,7 @@ Buscar
 </form>
 
 <div class="alert alert-info">
-
 Total de clientes cadastrados: <strong>{{ total_clientes }}</strong>
-
 </div>
 
 <table class="table table-striped table-bordered table-hover">
@@ -64,7 +60,7 @@ Total de clientes cadastrados: <strong>{{ total_clientes }}</strong>
 <th>Telefone</th>
 <th>Email</th>
 <th>Cidade</th>
-<th width="180">Ações</th>
+<th width="200">Ações</th>
 </tr>
 </thead>
 
@@ -84,10 +80,17 @@ Total de clientes cadastrados: <strong>{{ total_clientes }}</strong>
 Editar
 </a>
 
-<a href="{% url 'excluir_cliente' cliente.id %}"
-class="btn btn-danger btn-sm"
-onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
-Excluir </a>
+<!-- EXCLUIR CORRIGIDO -->
+<form method="POST" action="{% url 'excluir_cliente' cliente.id %}" style="display:inline;">
+    {% csrf_token %}
+    <button
+        type="submit"
+        class="btn btn-danger btn-sm"
+        onclick="return confirm('Tem certeza que deseja excluir este cliente?')"
+    >
+        Excluir
+    </button>
+</form>
 
 </td>
 
