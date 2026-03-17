@@ -1,0 +1,17 @@
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Executáveis
+*.exe
+
+# Ambiente virtual
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# VSCode
+.vscode/
