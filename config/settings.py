@@ -35,14 +35,17 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "corsheaders",  # 👈 ADICIONADO
     "clientes",
 ]
 
 
+
 # MIDDLEWARE
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # 👈 TEM QUE SER O PRIMEIRO
 
+    "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -51,9 +54,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    
 ]
-
 
 ROOT_URLCONF = "config.urls"
 
@@ -123,8 +124,6 @@ X_FRAME_OPTIONS = "DENY"
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-CORS_ALLOW_ALL_ORIGINS = True
-'corsheaders',
-'corsheaders.middleware.CorsMiddleware',
+CCORS_ALLOW_ALL_ORIGINS = True
 
 
