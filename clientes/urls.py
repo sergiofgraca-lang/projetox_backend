@@ -1,7 +1,11 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
+    
+    # contador de visitas
+    path('visitas/', views.contar_visitas),
 
     # LOGIN
     path('login/', views.login_usuario, name='login'),

@@ -5,6 +5,25 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 import logging
+from django.http import JsonResponse
+import os
+
+ARQUIVO = "contador.txt"
+
+def contar_visitas(request):
+    if not os.path.exists(ARQUIVO):
+        with open(ARQUIVO, "w") as f:
+            f.write("0")
+
+    with open(ARQUIVO, "r") as f:
+        numero = int(f.read())
+
+    numero += 1
+
+    with open(ARQUIVO, "w") as f:
+        f.write(str(numero))
+
+    return JsonResponse({"total": numero})
 
 logger = logging.getLogger(__name__)
 
