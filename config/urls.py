@@ -9,4 +9,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home),
     path('', include('clientes.urls')),
+    path('', include('analytics.urls')),
+    
 ]
