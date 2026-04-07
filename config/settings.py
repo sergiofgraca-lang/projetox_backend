@@ -4,7 +4,7 @@ Django settings for config project.
 
 import os
 from pathlib import Path
-import dj_database_url
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    
 ]
 
 
@@ -121,4 +122,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+CORS_ALLOW_ALL_ORIGINS = True
+'corsheaders',
+'corsheaders.middleware.CorsMiddleware',
+
 
