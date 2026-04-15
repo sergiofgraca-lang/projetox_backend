@@ -14,9 +14,9 @@ SECRET_KEY = os.getenv(
     "django-insecure-temp-key"
 )
 
-DEBUG = True  # 🔥 deixe True por enquanto (depois mudamos)
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # 🔥 Railway precisa disso inicialmente
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = []
 
@@ -53,16 +53,43 @@ MIDDLEWARE = [
 
 
 ROOT_URLCONF = "config.urls"
-
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# DATABASE (🔥 SOMENTE ISSO — Railway usa DATABASE_URL)
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get("DATABASE_URL")
-    )
-}
+# 🔥 TEMPLATES (FALTAVA ISSO — RESOLVE O ERRO DO ADMIN)
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],  # pode adicionar templates depois
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+
+# 🔥 DATABASE (funciona local + Railway)
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # 🔥 fallback local (evita erro no migrate)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 # INTERNATIONALIZATION
 LANGUAGE_CODE = "pt-br"
