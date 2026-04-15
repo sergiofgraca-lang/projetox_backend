@@ -1,16 +1,43 @@
 from django.shortcuts import render
-
-# Create your views here.
 from django.http import JsonResponse
-import os
+from datetime import datetime, timedelta
 from .models import Visita
 
-ARQUIVO = "contador.txt"
 
+# 🔥 API (usada pelo React)
 def contar_visitas(request):
-    visita, created = Visita.objects.get_or_create(id=1)
+    ip = request.META.get('REMOTE_ADDR')
 
-    visita.total += 1
-    visita.save()
+    # salva cada visita
+    Visita.objects.create(ip=ip)
 
-    return JsonResponse({"total": visita.total})
+    total = Visita.objects.count()
+
+    ontem = datetime.now() - timedelta(days=1)
+    ultimas_24h = Visita.objects.filter(data__gte=ontem).count()
+
+    unicos = Visita.objects.values('ip').distinct().count()
+
+    return JsonResponse({
+        "total": total,
+        "ultimas_24h": ultimas_24h,
+        "unicos": unicos
+    })
+
+
+# 🔥 PÁGINA HTML (painel)
+def painel_analytics(request):
+    total = Visita.objects.count()
+
+    ontem = datetime.now() - timedelta(days=1)
+    ultimas_24h = Visita.objects.filter(data__gte=ontem).count()
+
+    unicos = Visita.objects.values('ip').distinct().count()
+
+    context = {
+        "total": total,
+        "ultimas_24h": ultimas_24h,
+        "unicos": unicos
+    }
+
+    return render(request, "analytics/painel.html", context)
