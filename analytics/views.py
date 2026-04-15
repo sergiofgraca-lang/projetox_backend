@@ -41,3 +41,12 @@ def painel_analytics(request):
     }
 
     return render(request, "analytics/painel.html", context)
+
+def pagina_visitas(request):
+    visita = Visita.objects.first()
+    
+    total = visita.total if visita else 0
+
+    return render(request, "visitas.html", {
+        "total_visitas": total
+    })

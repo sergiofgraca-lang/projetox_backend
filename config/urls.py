@@ -10,5 +10,6 @@ urlpatterns = [
     path('', home),
     path('', include('clientes.urls')),
     path('', include('analytics.urls')),
+     path('', include('analytics.urls')),
     
 ]

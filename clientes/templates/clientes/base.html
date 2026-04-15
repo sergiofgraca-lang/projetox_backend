@@ -33,6 +33,10 @@
 Cadastrar
 </a>
 
+<a href="{% url 'dashboard_visitas' %}" class="btn btn-warning btn-sm">
+📊 Visitas
+</a>
+
 {% if request.user.is_staff %}
 <a href="{% url 'lista_clientes' %}" class="btn btn-primary btn-sm">
 Clientes
