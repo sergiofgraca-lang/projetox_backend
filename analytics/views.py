@@ -60,6 +60,18 @@ def painel_analytics(request):
 
 # 🔥 Página simples (dashboard básico)
 def pagina_visitas(request):
+    # pega IP real (Railway / produção)
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    # 🔥 salva visita
+    Visita.objects.create(ip=ip)
+
+    # 🔥 total atualizado
     total = Visita.objects.count()
 
     return render(request, "dashboard.html", {
