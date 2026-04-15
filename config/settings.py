@@ -59,9 +59,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # DATABASE (🔥 SOMENTE ISSO — Railway usa DATABASE_URL)
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
-
 
 # INTERNATIONALIZATION
 LANGUAGE_CODE = "pt-br"
