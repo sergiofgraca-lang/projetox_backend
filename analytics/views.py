@@ -5,7 +5,7 @@ from datetime import timedelta
 from .models import Visita
 
 
-# 🔥 FUNÇÃO para pegar IP real (Railway / proxy)
+# 🔥 Função para pegar IP real (Railway / proxy)
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     
@@ -15,20 +15,9 @@ def get_ip(request):
     return request.META.get('REMOTE_ADDR')
 
 
-# 🔥 API (usada pelo React)
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import Visita
-from django.utils import timezone
-from datetime import timedelta
-
-
+# 🔥 API (usada pelo React → ESSA É A ÚNICA QUE CONTA VISITA)
 def contar_visitas(request):
-    ip = request.META.get('HTTP_X_FORWARDED_FOR')
-    if ip:
-        ip = ip.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
+    ip = get_ip(request)
 
     # evita múltiplas visitas do mesmo IP em 1h
     uma_hora_atras = timezone.now() - timedelta(hours=1)
@@ -43,7 +32,7 @@ def contar_visitas(request):
     })
 
 
-# 🔥 PÁGINA HTML (painel bonito)
+# 🔥 Painel completo (analytics)
 def painel_analytics(request):
     total = Visita.objects.count()
 
@@ -51,7 +40,6 @@ def painel_analytics(request):
     ontem = agora - timedelta(days=1)
 
     ultimas_24h = Visita.objects.filter(data__gte=ontem).count()
-
     unicos = Visita.objects.values('ip').distinct().count()
 
     context = {
@@ -63,20 +51,8 @@ def painel_analytics(request):
     return render(request, "analytics/painel.html", context)
 
 
-# 🔥 Página simples (dashboard básico)
+# 🔥 Dashboard simples (NÃO CONTA VISITA)
 def pagina_visitas(request):
-    # pega IP real (Railway / produção)
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-
-    # 🔥 salva visita
-    Visita.objects.create(ip=ip)
-
-    # 🔥 total atualizado
     total = Visita.objects.count()
 
     return render(request, "dashboard.html", {
