@@ -17,12 +17,27 @@ def get_ip(request):
 
 # 🔥 API (usada pelo React → ESSA É A ÚNICA QUE CONTA VISITA)
 def contar_visitas(request):
-    ip = get_ip(request)
+    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
 
-    # evita múltiplas visitas do mesmo IP em 1h
-    uma_hora_atras = timezone.now() - timedelta(hours=1)
+    # 🔥 bloqueio leve (apenas bots óbvios)
+    if 'bot' in user_agent or 'spider' in user_agent:
+        return JsonResponse({"status": "bot ignorado"})
 
-    if not Visita.objects.filter(ip=ip, data__gte=uma_hora_atras).exists():
+    # pega IP
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    # 🔥 limite simples (evita spam)
+    from django.utils import timezone
+    from datetime import timedelta
+
+    agora = timezone.now()
+    limite = agora - timedelta(minutes=5)
+
+    if not Visita.objects.filter(ip=ip, data__gte=limite).exists():
         Visita.objects.create(ip=ip)
 
     total = Visita.objects.count()
@@ -30,7 +45,6 @@ def contar_visitas(request):
     return JsonResponse({
         "total": total
     })
-
 
 # 🔥 Painel completo (analytics)
 def painel_analytics(request):
