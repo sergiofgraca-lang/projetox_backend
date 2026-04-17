@@ -16,25 +16,30 @@ def get_ip(request):
 
 
 # 🔥 API (usada pelo React)
-def contar_visitas(request):
-    ip = get_ip(request)
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Visita
+from django.utils import timezone
+from datetime import timedelta
 
-    # salva cada visita
-    Visita.objects.create(ip=ip)
+
+def contar_visitas(request):
+    ip = request.META.get('HTTP_X_FORWARDED_FOR')
+    if ip:
+        ip = ip.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    # evita múltiplas visitas do mesmo IP em 1h
+    uma_hora_atras = timezone.now() - timedelta(hours=1)
+
+    if not Visita.objects.filter(ip=ip, data__gte=uma_hora_atras).exists():
+        Visita.objects.create(ip=ip)
 
     total = Visita.objects.count()
 
-    agora = timezone.now()
-    ontem = agora - timedelta(days=1)
-
-    ultimas_24h = Visita.objects.filter(data__gte=ontem).count()
-
-    unicos = Visita.objects.values('ip').distinct().count()
-
     return JsonResponse({
-        "total": total,
-        "ultimas_24h": ultimas_24h,
-        "unicos": unicos
+        "total": total
     })
 
 
